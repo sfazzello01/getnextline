@@ -6,7 +6,7 @@
 /*   By: sfazzell <sfazzell@student.42roma.it>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/13 14:46:45 by sfazzell          #+#    #+#             */
-/*   Updated: 2024/04/23 17:03:43 by sfazzell         ###   ########.fr       */
+/*   Updated: 2024/04/23 20:17:37 by sfazzell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 # include <fcntl.h>
 
 # ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 10000
+#  define BUFFER_SIZE 10
 # endif
 
 char	*get_next_line(int fd);
@@ -27,6 +27,7 @@ char	*ft_strjoin(char *s1, char *s2);
 char	*ft_strdup(char *s1);
 char	*ft_strchr(char *s, int c);
 char	*ft_substr(const char *s, unsigned int start, size_t len);
-char	**ft_split(char const *s, char c);
+char	*stralloc(char *buf, int cut);
+char	*extract_line(char *str, char *ptr);
 
 #endif
