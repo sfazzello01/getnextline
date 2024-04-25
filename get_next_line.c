@@ -6,12 +6,69 @@
 /*   By: sfazzell <sfazzell@student.42roma.it>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/13 14:37:25 by sfazzell          #+#    #+#             */
-/*   Updated: 2024/04/23 20:35:15 by sfazzell         ###   ########.fr       */
+/*   Updated: 2024/04/25 12:10:03 by sfazzell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 #include <stdio.h>
+
+static char	*stralloc(char *buf, int cut)
+{
+	static char	*str;
+	char		*temp;
+
+	if (!cut)
+	{
+		if (str)
+			str = ft_strjoin(str, buf);
+		else
+			str = ft_strdup(buf);
+		return (str);
+	}
+	else if (cut > 0)
+	{
+		if (str && str[cut])
+		{
+			temp = ft_strdup(str + cut);
+			free(str);
+			str = temp;
+			return (NULL);
+		}
+		free(str);
+	}
+	else if (cut == -1 && str)
+		free(str);
+	str = NULL;
+	return (NULL);
+}
+
+static char	*extracted_line(char *line, char *str, char *buf, int cut)
+{
+	free(buf);
+	if (cut)
+	{
+		line = ft_substr(str, 0, ft_strchr(str, '\n') - str);
+		stralloc(NULL, ft_strlen(line) + 1);
+	}
+	else
+	{
+		line = ft_strdup(str);
+		stralloc(NULL, -1);
+	}
+	return (line);
+}
+
+static char	*last_line(char *str, char *line, char *buf)
+{
+	str = stralloc(buf, 0);
+	if (str && ft_strchr(str, '\n'))
+		return (extracted_line(line, str, buf, 1));
+	else if (str && ft_strlen(str) > 0)
+		return (extracted_line(line, str, buf, 0));
+	else
+		return ((void)stralloc(NULL, -1), free(buf), NULL);
+}
 
 char *get_next_line(int fd)
 {
@@ -23,52 +80,20 @@ char *get_next_line(int fd)
 	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0)
 		return (NULL);
 	buf = (char *)malloc(sizeof(char)*(BUFFER_SIZE + 1));
+	buf[rd] = '\0';
 	rd = read(fd, buf, BUFFER_SIZE);
-	buf[rd] = '\0'; // null-terminate the buffer
 	while(rd > 0)
 	{
 		str = stralloc(buf, 0);
-		if (str)
-		{
-			if (ft_strchr(str, '\n')) // check if newline character is present in str
-			{
-				line = extract_line(str, ft_strchr(str, '\n')); // extract the line from str
-				free(buf);
-				stralloc(NULL, ft_strlen(line) + 1);
-				return line; // return the extracted line
-			}
-		}
-		rd = read(fd, buf, BUFFER_SIZE); // read more characters from file into buffer
+		if (str && ft_strchr(str, '\n'))
+				return (extracted_line(line, str, buf, 1));
+		rd = read(fd, buf, BUFFER_SIZE);
 	}
-	if (rd == 0) // reached end of file
-	{
-		str = stralloc(buf, 0);
-		if (str)
-		{
-			if (ft_strchr(str, '\n'))
-			{
-				line = extract_line(str, ft_strchr(str, '\n'));
-				free(str);
-				free(buf);
-				stralloc(NULL, ft_strlen(line) + 1);
-				return (line); // return the extracted line
-			}
-			else if (ft_strlen(str) > 0)
-			{
-				line = ft_strdup(str);
-				free(buf);
-				stralloc(NULL, -1);
-				return (line); // return the extracted line
-			}
-			stralloc(NULL, -1);
-		}
-		
-		free(buf);
-		return (NULL); // return NULL if no more lines to read
-	}
-	return (NULL); // return NULL in case of error
+	if (rd == 0)
+		return (last_line(str, line, buf));
+	return (free(buf), NULL);
 }
-/*
+
 int main (int argc, char **argv)
 {
 	int		fd;
@@ -90,4 +115,4 @@ int main (int argc, char **argv)
  		close(fd);
  	}
  	return (0);
-}*/
+}
