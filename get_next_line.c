@@ -6,7 +6,7 @@
 /*   By: sfazzell <sfazzell@student.42roma.it>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/13 14:37:25 by sfazzell          #+#    #+#             */
-/*   Updated: 2024/04/25 12:10:03 by sfazzell         ###   ########.fr       */
+/*   Updated: 2024/04/25 12:16:19 by sfazzell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,14 +80,14 @@ char *get_next_line(int fd)
 	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0)
 		return (NULL);
 	buf = (char *)malloc(sizeof(char)*(BUFFER_SIZE + 1));
-	buf[rd] = '\0';
-	rd = read(fd, buf, BUFFER_SIZE);
+	rd = 1;
 	while(rd > 0)
 	{
+		rd = read(fd, buf, BUFFER_SIZE);
+		buf[rd] = '\0';
 		str = stralloc(buf, 0);
 		if (str && ft_strchr(str, '\n'))
 				return (extracted_line(line, str, buf, 1));
-		rd = read(fd, buf, BUFFER_SIZE);
 	}
 	if (rd == 0)
 		return (last_line(str, line, buf));
