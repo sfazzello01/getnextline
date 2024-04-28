@@ -6,7 +6,7 @@
 /*   By: sfazzell <sfazzell@student.42roma.it>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/13 14:46:45 by sfazzell          #+#    #+#             */
-/*   Updated: 2024/04/24 20:01:31 by sfazzell         ###   ########.fr       */
+/*   Updated: 2024/04/27 16:03:33 by sfazzell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 # include <fcntl.h>
 
 # ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 10
+#  define BUFFER_SIZE 42
 # endif
 
 char	*get_next_line(int fd);

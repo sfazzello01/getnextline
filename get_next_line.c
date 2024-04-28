@@ -6,7 +6,7 @@
 /*   By: sfazzell <sfazzell@student.42roma.it>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/13 14:37:25 by sfazzell          #+#    #+#             */
-/*   Updated: 2024/04/25 12:16:19 by sfazzell         ###   ########.fr       */
+/*   Updated: 2024/04/25 14:38:10 by sfazzell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,8 +39,7 @@ static char	*stralloc(char *buf, int cut)
 	}
 	else if (cut == -1 && str)
 		free(str);
-	str = NULL;
-	return (NULL);
+	return ((void)(str = NULL), NULL);
 }
 
 static char	*extracted_line(char *line, char *str, char *buf, int cut)
@@ -70,7 +69,7 @@ static char	*last_line(char *str, char *line, char *buf)
 		return ((void)stralloc(NULL, -1), free(buf), NULL);
 }
 
-char *get_next_line(int fd)
+char	*get_next_line(int fd)
 {
 	char		*str;
 	char		*line;
@@ -79,7 +78,8 @@ char *get_next_line(int fd)
 
 	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0)
 		return (NULL);
-	buf = (char *)malloc(sizeof(char)*(BUFFER_SIZE + 1));
+	buf = (char *)malloc(sizeof(char) *(BUFFER_SIZE + 1));
+	line = NULL;
 	rd = 1;
 	while(rd > 0)
 	{
@@ -93,26 +93,20 @@ char *get_next_line(int fd)
 		return (last_line(str, line, buf));
 	return (free(buf), NULL);
 }
-
-int main (int argc, char **argv)
+int main(int argc, char *argv[])
 {
-	int		fd;
-	char	*line;
-
- 	if (argc == 2)
- 	{
- 		fd = open(argv[1], O_RDONLY);
- 		if (fd < 0)
- 			return (0);
- 		line = get_next_line(fd);
- 		while (line)
- 		{
- 			//sleep(1);
- 			printf("%s\n", line);
- 			free(line);
- 			line = get_next_line(fd);
- 		}
- 		close(fd);
- 	}
- 	return (0);
+	int fd = open(argv[1], O_RDONLY);
+	if (fd < 0)
+	{
+		printf("Failed to open file\n");
+		return 1;
+	}
+	char *line;
+	while ((line = get_next_line(fd)) != NULL)
+	{
+		printf("line: %s\n", line);
+		free(line);
+	}
+	close(fd);
+	return 0;
 }
